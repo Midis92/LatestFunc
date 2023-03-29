@@ -38,7 +38,7 @@ app.timer('timerTrigger1', {
         timestamp.setSeconds(0);
         
         let hours = Math.floor((timestamp / 1000 / 60 / 60) % 24);
-        hours += 5;
+        hours += 4;
 
         const Data = {
             timestamp: hours,
