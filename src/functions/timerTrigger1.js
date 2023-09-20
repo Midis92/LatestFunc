@@ -10,8 +10,9 @@ const containerName = process.env.CONTAINER_NAME;
 const mongoUrl = process.env.MONGO_CONNECTION_STRING;
 const mongoDbName = 'AverageTemperature';
 app.timer('timerTrigger1', {
-    schedule: '0 0 * * * *',
+    schedule: '0 5 * * * *',
     async handler(myTimer, context) {
+        console.log('timerTrigger1 function executed!');
         const now = new Date();
         const containerClient = blobServiceClient.getContainerClient(containerName);
         const hourDirectory = `${now.getUTCFullYear()}/${(now.getUTCMonth() + 1).toString().padStart(2, '0')}/${now.getUTCDate().toString().padStart(2, '0')}/${(now.getUTCHours() - 1).toString().padStart(2, '0')}`;
@@ -32,16 +33,13 @@ app.timer('timerTrigger1', {
         }
         const dailyAverage = dailyTemperatures.reduce((acc, curr) => acc + curr.temperature, 0) / dailyTemperatures.length;
 
-        const timestampIndex = 0; // Replace with the index of the timestamp you want to modify
+        const timestampIndex = 2; // Replace with the index of the timestamp you want to modify
         const timestamp = new Date(dailyTimestamps[timestampIndex]);
         timestamp.setMinutes(0);
         timestamp.setSeconds(0);
-        
-        let hours = Math.floor((timestamp / 1000 / 60 / 60) % 24);
-        hours += 4;
 
         const Data = {
-            timestamp: hours,
+            timestamp: timestamp,
             HourAverage: dailyAverage
         };
         const client = new MongoClient(mongoUrl, { useUnifiedTopology: true });
@@ -53,7 +51,6 @@ app.timer('timerTrigger1', {
         const collectionName = `${today}`;
         const db = client.db(mongoDbName);
         let collection = db.collection(collectionName);
-        //const dailyAverageDoc = await collection.findOne({ date: today });
         const collectionExists = await db.listCollections({ name: collectionName }).hasNext();
 
         if (collectionExists) {
@@ -64,10 +61,6 @@ app.timer('timerTrigger1', {
             collection = db.collection(collectionName);
             const result = await collection.insertOne(Data);
         }
-
-        // Insert or update dailyAverageDoc in the collection
-        //await collection.updateOne({ date: today }, { $set: { dailyAverage: dailyAverage } }, { upsert: true });
-        //await collection.insertOne(data);
         await client.close();
 
     }

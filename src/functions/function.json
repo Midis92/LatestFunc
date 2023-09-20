@@ -1,0 +1,11 @@
+{
+    "scriptFile": "./src/functions/timerTrigger1.js",
+    "bindings": [
+      {
+        "name": "timerTrigger1",
+        "type": "timerTrigger",
+        "direction": "in",
+        "schedule": "0 5 * * * *"
+      }
+    ]
+}

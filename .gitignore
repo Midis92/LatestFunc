@@ -97,3 +97,13 @@ local.settings.json
 __blobstorage__
 __queuestorage__
 __azurite_db*__.json
+
+# More
+.funcignore
+extentions.json
+host.json
+server.json
+package.json
+package-lock.json
+server.js
+.vscode/
